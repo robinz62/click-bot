@@ -15,3 +15,4 @@ other ideas
 * loop control
 * a status bar at bottom (running?, current mouse location, etc)
 * (maybe) if-then-else logic control
+* a command line interface (in addition to GUI)
