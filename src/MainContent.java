@@ -1,4 +1,5 @@
 import java.awt.AWTException;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -7,6 +8,8 @@ import java.awt.Insets;
 import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -19,7 +22,8 @@ import javax.swing.ListSelectionModel;
 
 public class MainContent extends JPanel {
 	
-	private DefaultListModel<Command> list;
+	private DefaultListModel<Command> listModel;
+	private JList<Command> listDisplay;
 	private Robot robot;
 	
 	private static final long serialVersionUID = 1L;
@@ -27,7 +31,7 @@ public class MainContent extends JPanel {
 	public MainContent() throws AWTException {
 		robot = new Robot();
 		
-		list = new DefaultListModel<>();
+		listModel = new DefaultListModel<>();
 		this.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 		this.setLayout(new GridBagLayout());
 		
@@ -52,12 +56,14 @@ public class MainContent extends JPanel {
 	 * @return the list box
 	 */
 	private JScrollPane createCommandList() {
-		JList<Command> commandList = new JList<>(list);
-		commandList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		commandList.setVisibleRowCount(16);
-		commandList.setFixedCellWidth(200);
-		commandList.setFont(new Font("Consolas", Font.PLAIN, 12));
-		JScrollPane scrollPane = new JScrollPane(commandList);
+		listDisplay = new JList<>(listModel);
+		listDisplay.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		listDisplay.setVisibleRowCount(16);
+		listDisplay.setFixedCellWidth(200);
+		listDisplay.setFont(new Font("Consolas", Font.PLAIN, 12));
+		JScrollPane scrollPane = new JScrollPane(listDisplay,
+				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		return scrollPane;
 	}
 	
@@ -78,18 +84,18 @@ public class MainContent extends JPanel {
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 0;
-		c.insets = new Insets(0, 0, 16, 0);
 		buttonsPanel.add(addCommandButton, c);
 		
 		c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 1;
-		c.insets = new Insets(0, 0, 16, 0);
+		c.insets = new Insets(16, 0, 0, 0);
 		buttonsPanel.add(addCommandTextField, c);
 		
 		c = new GridBagConstraints();
 		c.gridx = 0;
-		c.gridy = 2;
+		c.gridy = 5;
+		c.insets = new Insets(150, 0, 0, 0); // figure out a good number
 		buttonsPanel.add(runButton, c);
 		
 		return buttonsPanel;
@@ -133,6 +139,9 @@ public class MainContent extends JPanel {
 					} else if (toks[0].equals("wait")) {
 						c = Wait.fromString(input);
 						textField.setText("");
+					} else if (toks[0].equals("type")) {
+						c = Keytype.fromString(input);
+						textField.setText("");
 					} else {
 						// invalid input
 						return;
@@ -141,11 +150,33 @@ public class MainContent extends JPanel {
 					// invalid input
 					return;
 				}
-				list.addElement(c);
+				listModel.addElement(c);
+			}
+		});
+		textField.addFocusListener(new FocusListener() {
+			private boolean showingHint = true;
+			@Override
+			public void focusGained(FocusEvent arg0) {
+				if (showingHint) {
+					textField.setText("");
+					textField.setForeground(Color.BLACK);
+					showingHint = false;
+				}
+			}
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				if (!showingHint && textField.getText().isEmpty()) {
+					textField.setForeground(new Color(117, 117, 117));
+					textField.setText("type command");
+					showingHint = true;
+				}
 			}
 		});
 		textField.setPreferredSize(new Dimension(108, 23));
+		textField.setAlignmentY(CENTER_ALIGNMENT);
 		textField.setFont(new Font("Consolas", Font.PLAIN, 11));
+		textField.setForeground(new Color(117, 117, 117));
+		textField.setText("type command");
 		return textField;
 	}
 	
@@ -158,8 +189,9 @@ public class MainContent extends JPanel {
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				for (int i = 0; i < list.size(); ++i) {
-					list.get(i).execute(robot);
+				for (int i = 0; i < listModel.size(); ++i) {
+//					listDisplay.setSelectedIndex(i);  TODO: I don't know why this doesn't work
+					listModel.get(i).execute(robot);
 				}
 			}
 		});

@@ -1,4 +1,6 @@
 import java.awt.AWTException;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JFrame;
@@ -24,7 +26,7 @@ public class Application implements Runnable {
 		try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Warning: could not set system look and feel");
         }
 		
 		JFrame frame = createFrame();
@@ -35,14 +37,15 @@ public class Application implements Runnable {
 		try {
 			mc = new MainContent();
 		} catch (AWTException e) {
-			// ERR: could not instantiate Robot
 			System.out.println("Error creating Robot");
 			System.exit(-1);
 		}
 		
 		frame.setContentPane(mc);
 		frame.pack();
-		
+		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+		frame.setLocation(screen.width / 2 - frame.getWidth() / 2,
+				screen.height / 2 - frame.getHeight() / 2);
 		frame.setVisible(true);
 	}
 	
@@ -51,7 +54,6 @@ public class Application implements Runnable {
 	 */
 	private JFrame createFrame() {
 		JFrame frame = new JFrame("Macro Application");
-//		frame.setLocation(x, y);
 		frame.setResizable(false);
 		frame.setAlwaysOnTop(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
