@@ -12,6 +12,7 @@ public final class Click implements Command {
 	private final boolean specifiedLoc;
 	private final int x;
 	private final int y;
+	private final ClickType cType;
 	private final String asString;
 	
 	/**
@@ -21,11 +22,12 @@ public final class Click implements Command {
 	 * 
 	 * @see InputEvent
 	 */
-	public Click(int buttons) {
+	public Click(int buttons, ClickType cType) {
 		this.buttons = buttons;
 		specifiedLoc = false;
 		x = 0;
 		y = 0;
+		this.cType = cType;
 		asString = generateString();
 	}
 	
@@ -38,11 +40,12 @@ public final class Click implements Command {
 	 * 
 	 * @see InputEvent
 	 */
-	public Click(int buttons, int x, int y) {
+	public Click(int buttons, ClickType cType, int x, int y) {
 		this.buttons = buttons;
 		specifiedLoc = true;
 		this.x = x;
 		this.y = y;
+		this.cType = cType;
 		asString = generateString();
 	}
 	
@@ -51,20 +54,29 @@ public final class Click implements Command {
 		if (specifiedLoc) {
 			r.mouseMove(x, y);
 		}
-		r.mousePress(buttons);
-		r.mouseRelease(buttons);
+		
+		if (cType == ClickType.CLICK) {
+			r.mousePress(buttons);
+			r.mouseRelease(buttons);
+		} else if (cType == ClickType.DOWN) {
+			r.mousePress(buttons);
+		} else if (cType == ClickType.UP) {
+			r.mousePress(buttons);
+		}
 	}
 	
 	/**
 	 * Creates a Click command from an input String. See usage below:
 	 * <ul>
-	 *   <li>{@code click} - perform a left click at the current location</li>
-	 *   <li>{@code click [l|r|m]} - perform the specified click or combination
-	 *       of clicks at the current location</li>
-	 *   <li>{@code click [x-pos] [y-pos]} - perform a left click at the
+	 *   <li>{@code [click/mdown/mup]} - perform a left click/press/release at
+	 *       the current location</li>
+	 *   <li>{@code [click/mdown/mup] [l|r|m]} - perform the specified action
+	 *       or combination of actions (l, m, r) at the current location</li>
+	 *   <li>{@code [click/mdown/up] [x-pos] [y-pos]} - perform a left action
+	 *       at the specified location</li>
+	 *   <li>{@code [click/mdown/up] [x-pos] [y-pos] [l|r|m]} - perform the
+	 *       specified action or combination of actions (l, m, r) at the
 	 *       specified location</li>
-	 *   <li>{@code click [x-pos] [y-pos] [l|r|m]} - perform the specified
-	 *       click or combination of clicks at the specified location</li>
 	 * </ul>
 	 * @param s the string to parse
 	 * @return the resultant Click
@@ -72,19 +84,28 @@ public final class Click implements Command {
 	 */
 	public static Click fromString(String s) {
 		String[] toks = s.split(" ");
-		if (!toks[0].equals("click")) {
+		ClickType cType;
+		if (toks[0].equals("click")) {
+			cType = ClickType.CLICK;
+		} else if (toks[0].equals("mdown")) {
+			cType = ClickType.DOWN;
+		} else if (toks[0].equals("mup")) {
+			cType = ClickType.UP;
+		} else {
 			throw new IllegalArgumentException();
 		}
 		if (toks.length == 1) {
-			return new Click(InputEvent.BUTTON1_DOWN_MASK);
+			return new Click(InputEvent.BUTTON1_DOWN_MASK, cType);
 		} else if (toks.length == 2) {
-			return new Click(parseButtons(toks[1]));
+			return new Click(parseButtons(toks[1]), cType);
 		} else if (toks.length == 3) {
 			return new Click(InputEvent.BUTTON1_DOWN_MASK,
+					cType,
 					Integer.parseInt(toks[1]),
 					Integer.parseInt(toks[2]));
 		} else if (toks.length == 4) {
 			return new Click(parseButtons(toks[3]),
+					cType,
 					Integer.parseInt(toks[1]),
 					Integer.parseInt(toks[2]));
 		} else {
@@ -123,9 +144,17 @@ public final class Click implements Command {
 	}
 	
 	private String generateString() {
+		String command = "ERR";
+		if (cType == ClickType.CLICK) {
+			command = "click";
+		} else if (cType == ClickType.DOWN) {
+			command = "mdown";
+		} else if (cType == ClickType.UP) {
+			command = "mup  ";
+		}
 		String loc = specifiedLoc
 				? "[" + String.format("%4d", x) + ", " + String.format("%4d", y) + "]"
-				: "curr loc";
+				: "[curr loc  ]";
 		String but = "";
 		if ((buttons & InputEvent.BUTTON1_DOWN_MASK) != 0) {
 			but += "L";
@@ -136,7 +165,13 @@ public final class Click implements Command {
 		if ((buttons & InputEvent.BUTTON3_DOWN_MASK) != 0) {
 			but += "M";
 		}
-		return "click " + loc + " " + but;
+		return command + " " + loc + " " + but;
+	}
+	
+	public enum ClickType {
+		CLICK,
+		DOWN,
+		UP
 	}
 	
 }

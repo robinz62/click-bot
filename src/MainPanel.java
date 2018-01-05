@@ -14,13 +14,22 @@ import java.awt.event.FocusListener;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 
-public class MainContent extends JPanel {
+/**
+ * A JPanel containing the application's main user interface, including the
+ * command list and some buttons.
+ * @author Robin Zhang
+ *
+ */
+public class MainPanel extends JPanel {
 	
 	private DefaultListModel<Command> listModel;
 	private JList<Command> listDisplay;
@@ -28,7 +37,7 @@ public class MainContent extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
 
-	public MainContent() throws AWTException {
+	public MainPanel() throws AWTException {
 		robot = new Robot();
 		
 		listModel = new DefaultListModel<>();
@@ -95,7 +104,7 @@ public class MainContent extends JPanel {
 		c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 5;
-		c.insets = new Insets(150, 0, 0, 0); // figure out a good number
+		c.insets = new Insets(150, 0, 0, 0); // TODO: figure out a good number
 		buttonsPanel.add(runButton, c);
 		
 		return buttonsPanel;
@@ -110,10 +119,23 @@ public class MainContent extends JPanel {
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO: create dialog that lets user select action
+				JDialog dialog = new JDialog(
+						(JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, MainPanel.this),
+						"Add Command",
+						true);
+				dialog.add(new AddCommandPanel(listModel));
+				dialog.setAlwaysOnTop(true);
+				dialog.setResizable(false);
+				dialog.pack();
+				dialog.setLocationRelativeTo(MainPanel.this);
+				dialog.setVisible(true);
 			}
 		});
-		button.setPreferredSize(new Dimension(110, 23));
+		// size to preferred size if possible, but not if new size is smaller
+		// than current size to prevent text getting truncated
+		Dimension currSize = button.getPreferredSize();
+		button.setPreferredSize(new Dimension(Math.max(currSize.width, 110),
+				Math.max(currSize.height, 23)));
 		return button;
 	}
 	
@@ -173,7 +195,6 @@ public class MainContent extends JPanel {
 			}
 		});
 		textField.setPreferredSize(new Dimension(108, 23));
-		textField.setAlignmentY(CENTER_ALIGNMENT);
 		textField.setFont(new Font("Consolas", Font.PLAIN, 11));
 		textField.setForeground(new Color(117, 117, 117));
 		textField.setText("type command");
@@ -190,7 +211,7 @@ public class MainContent extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				for (int i = 0; i < listModel.size(); ++i) {
-//					listDisplay.setSelectedIndex(i);  TODO: I don't know why this doesn't work
+//					listDisplay.setSelectedIndex(i);  // TODO: I don't know why this doesn't work
 					listModel.get(i).execute(robot);
 				}
 			}

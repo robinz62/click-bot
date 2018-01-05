@@ -1,12 +1,15 @@
 import java.awt.AWTException;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -17,6 +20,17 @@ import javax.swing.UIManager;
  *
  */
 public class Application implements Runnable {
+	
+	private JFrame frame;
+	
+	private final static String helpMessage;
+	private final static String aboutMessage;
+	
+	static {
+		helpMessage = "Look at the readme";
+		aboutMessage = "put something here";
+	}
+	
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Application());
 	}
@@ -29,13 +43,13 @@ public class Application implements Runnable {
             System.err.println("Warning: could not set system look and feel");
         }
 		
-		JFrame frame = createFrame();
+		frame = createFrame();
 		JMenuBar menuBar = createMenuBar();
 		frame.setJMenuBar(menuBar);
 		
-		MainContent mc = null;
+		MainPanel mc = null;
 		try {
-			mc = new MainContent();
+			mc = new MainPanel();
 		} catch (AWTException e) {
 			System.out.println("Error creating Robot");
 			System.exit(-1);
@@ -49,8 +63,9 @@ public class Application implements Runnable {
 		frame.setVisible(true);
 	}
 	
-	/*
-	 * Creates the main frame with custom appearance.
+	/**
+	 * Creates the main, blank frame.
+	 * @return the frame
 	 */
 	private JFrame createFrame() {
 		JFrame frame = new JFrame("Macro Application");
@@ -60,8 +75,9 @@ public class Application implements Runnable {
 		return frame;
 	}
 	
-	/*
-	 * Creates the custom menu bar.
+	/**
+	 * Creates and populates the menu bar.
+	 * @return the menu bar
 	 */
 	private JMenuBar createMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
@@ -89,7 +105,19 @@ public class Application implements Runnable {
 		JMenu help = new JMenu("Help");
 		help.setMnemonic(KeyEvent.VK_H);
 		JMenuItem mHelp = new JMenuItem("View Help");
+		mHelp.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				showHelp();
+			}
+		});
 		JMenuItem mAbout = new JMenuItem("About");
+		mAbout.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				showAbout();
+			}
+		});
 		help.add(mHelp);
 		help.addSeparator();
 		help.add(mAbout);
@@ -99,5 +127,25 @@ public class Application implements Runnable {
 		menuBar.add(help);
 		
 		return menuBar;
+	}
+	
+	/**
+	 * Shows the help dialog.
+	 */
+	private void showHelp() {
+		JOptionPane.showMessageDialog(frame,
+				helpMessage,
+				"Help",
+				JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	/**
+	 * Shows the about dialog.
+	 */
+	private void showAbout() {
+		JOptionPane.showMessageDialog(frame,
+				aboutMessage,
+				"About",
+				JOptionPane.INFORMATION_MESSAGE);
 	}
 }
