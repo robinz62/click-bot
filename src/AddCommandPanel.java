@@ -1,5 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -9,6 +10,8 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
 
 import javax.swing.BorderFactory;
@@ -21,6 +24,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 public class AddCommandPanel extends JPanel {
 	
@@ -49,7 +54,7 @@ public class AddCommandPanel extends JPanel {
 		cards.setBorder(BorderFactory.createTitledBorder("Parameters"));
 		cards.add(createClickCard(), CLICKPANEL);
 		cards.add(createMoveCard(), MOVEPANEL);
-//		cards.add(createTypeCard(), TYPEPANEL);
+		cards.add(createTypeCard(), TYPEPANEL);
 //		cards.add(createWaitCard(), WAITPANEL);
 		
 		this.add(cb, BorderLayout.PAGE_START);
@@ -170,13 +175,13 @@ public class AddCommandPanel extends JPanel {
 					if (middle.isSelected()) {
 						buttons |= InputEvent.BUTTON3_DOWN_MASK;
 					}
-					Click.ClickType cType = null;
+					Click.ClickMode cType = null;
 					if (click.isSelected()) {
-						cType = Click.ClickType.CLICK;
+						cType = Click.ClickMode.CLICK;
 					} else if (down.isSelected()) {
-						cType = Click.ClickType.DOWN;
+						cType = Click.ClickMode.DOWN;
 					} else if (up.isSelected()) {
-						cType = Click.ClickType.UP;
+						cType = Click.ClickMode.UP;
 					}
 					if (!clickCurrLoc.isSelected()) {
 						int x = Integer.parseInt(xTextField.getText());
@@ -316,6 +321,177 @@ public class AddCommandPanel extends JPanel {
 		movePanel.add(add, gc);
 		
 		return movePanel;
+	}
+	
+	private JPanel createTypeCard() {
+		GridBagConstraints gc;
+		JPanel typePanel = new JPanel(new GridBagLayout());
+		typePanel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+		
+		// declared above so that other components can reference it
+		JTextField stringField = new JTextField();
+		
+		// Button for recording keystroke
+		JPanel recordKey = new JPanel(new GridBagLayout());
+		JButton recordButton = new JButton("Record Key");
+		JTextField keyText = new JTextField();
+		keyText.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				if (keyText.getText().equals("")) {
+					stringField.setEditable(true);
+				} else {
+					stringField.setEditable(false);
+				}
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				changedUpdate(e);
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				changedUpdate(e);
+			}
+		});
+		keyText.setPreferredSize(new Dimension(50, 21));
+		recordButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (keyText.isEditable()) {
+					// TODO listen to the next keystroke
+				}
+			}
+		});
+		gc = new GridBagConstraints();
+		gc.gridx = 0;
+		gc.gridy = 0;
+		recordKey.add(recordButton, gc);
+		gc = new GridBagConstraints();
+		gc.gridx = 1;
+		gc.gridy = 0;
+		gc.insets = new Insets(0, 4, 0, 0);
+		recordKey.add(keyText, gc);
+		
+		// Radio group for click type
+		JPanel radioPanel = new JPanel(new GridLayout(1, 3));
+		JRadioButton type = new JRadioButton("click");
+		type.setSelected(true);
+		JRadioButton down = new JRadioButton("down");
+		JRadioButton up = new JRadioButton("up");
+		ButtonGroup group = new ButtonGroup();
+		group.add(type);
+		group.add(down);
+		group.add(up);
+		radioPanel.add(type);
+		radioPanel.add(down);
+		radioPanel.add(up);
+		
+		// Separator
+		JLabel sep = new JLabel("----OR----");
+		
+		// Textfield for typing string
+		stringField.setPreferredSize(new Dimension(100, 23));
+		stringField.addFocusListener(new FocusListener() {
+			private boolean showingHint = true;
+			@Override
+			public void focusGained(FocusEvent arg0) {
+				if (showingHint) {
+					stringField.setText("");
+					stringField.setForeground(Color.BLACK);
+					showingHint = false;
+				}
+			}
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				if (!showingHint && stringField.getText().isEmpty()) {
+					stringField.setForeground(new Color(117, 117, 117));
+					stringField.setText("type string");
+					showingHint = true;
+				}
+			}
+		});
+		stringField.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				if (stringField.getText().equals("type string")
+						|| stringField.getText().equals("")) {
+					keyText.setEditable(true);
+				} else {
+					keyText.setEditable(false);
+				}
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				changedUpdate(e);
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				changedUpdate(e);
+			}
+		});
+		
+		stringField.setPreferredSize(new Dimension(108, 23));
+		stringField.setForeground(new Color(117, 117, 117));
+		stringField.setText("type string");
+		
+		// Button to add command
+		JButton add = new JButton("Add");
+		add.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					if (!stringField.isEditable()) {
+						// keyText must be filled
+						Keytype.KeytypeMode kType = null;
+						if (type.isSelected()) {
+							kType = Keytype.KeytypeMode.TYPE;
+						} else if (down.isSelected()) {
+							kType = Keytype.KeytypeMode.DOWN;
+						} else if (up.isSelected()) {
+							kType = Keytype.KeytypeMode.UP;
+						}
+						int code = -1; // TODO return a Keytype object using the code generated from record
+						list.addElement(new Keytype(kType, code));
+					} else if (!keyText.isEditable()) {
+						// stringField must be filled
+						list.addElement(new Keytype(stringField.getText()));
+					}
+					((Window) (AddCommandPanel.this.getTopLevelAncestor())).dispose();
+				} catch (NumberFormatException e) {
+					return;
+				}
+			}
+		});
+		
+		gc = new GridBagConstraints();
+		gc.gridx = 0;
+		gc.gridy = 0;
+		typePanel.add(recordKey, gc);
+		gc = new GridBagConstraints();
+		gc.gridx = 0;
+		gc.gridy = 1;
+		gc.insets = new Insets(8, 0, 0, 0);
+		typePanel.add(radioPanel, gc);
+		gc = new GridBagConstraints();
+		gc.gridx = 0;
+		gc.gridy = 2;
+		gc.insets = new Insets(8, 0, 0, 0);
+		typePanel.add(sep, gc);
+		gc = new GridBagConstraints();
+		gc.gridx = 0;
+		gc.gridy = 3;
+		gc.insets = new Insets(8, 0, 0, 0);
+		typePanel.add(stringField, gc);
+		gc = new GridBagConstraints();
+		gc.gridx = 0;
+		gc.gridy = 4;
+		gc.insets = new Insets(8, 0, 0, 0);
+		typePanel.add(add, gc);
+		
+		return typePanel;
 	}
 
 }

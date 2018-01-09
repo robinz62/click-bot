@@ -12,7 +12,7 @@ public final class Click implements Command {
 	private final boolean specifiedLoc;
 	private final int x;
 	private final int y;
-	private final ClickType cType;
+	private final ClickMode cMode;
 	private final String asString;
 	
 	/**
@@ -22,12 +22,12 @@ public final class Click implements Command {
 	 * 
 	 * @see InputEvent
 	 */
-	public Click(int buttons, ClickType cType) {
+	public Click(int buttons, ClickMode cType) {
 		this.buttons = buttons;
 		specifiedLoc = false;
 		x = 0;
 		y = 0;
-		this.cType = cType;
+		this.cMode = cType;
 		asString = generateString();
 	}
 	
@@ -40,12 +40,12 @@ public final class Click implements Command {
 	 * 
 	 * @see InputEvent
 	 */
-	public Click(int buttons, ClickType cType, int x, int y) {
+	public Click(int buttons, ClickMode cType, int x, int y) {
 		this.buttons = buttons;
 		specifiedLoc = true;
 		this.x = x;
 		this.y = y;
-		this.cType = cType;
+		this.cMode = cType;
 		asString = generateString();
 	}
 	
@@ -55,12 +55,12 @@ public final class Click implements Command {
 			r.mouseMove(x, y);
 		}
 		
-		if (cType == ClickType.CLICK) {
+		if (cMode == ClickMode.CLICK) {
 			r.mousePress(buttons);
 			r.mouseRelease(buttons);
-		} else if (cType == ClickType.DOWN) {
+		} else if (cMode == ClickMode.DOWN) {
 			r.mousePress(buttons);
-		} else if (cType == ClickType.UP) {
+		} else if (cMode == ClickMode.UP) {
 			r.mousePress(buttons);
 		}
 	}
@@ -84,13 +84,13 @@ public final class Click implements Command {
 	 */
 	public static Click fromString(String s) {
 		String[] toks = s.split(" ");
-		ClickType cType;
+		ClickMode cType;
 		if (toks[0].equals("click")) {
-			cType = ClickType.CLICK;
+			cType = ClickMode.CLICK;
 		} else if (toks[0].equals("mdown")) {
-			cType = ClickType.DOWN;
+			cType = ClickMode.DOWN;
 		} else if (toks[0].equals("mup")) {
-			cType = ClickType.UP;
+			cType = ClickMode.UP;
 		} else {
 			throw new IllegalArgumentException();
 		}
@@ -145,11 +145,11 @@ public final class Click implements Command {
 	
 	private String generateString() {
 		String command = "ERR";
-		if (cType == ClickType.CLICK) {
+		if (cMode == ClickMode.CLICK) {
 			command = "click";
-		} else if (cType == ClickType.DOWN) {
+		} else if (cMode == ClickMode.DOWN) {
 			command = "mdown";
-		} else if (cType == ClickType.UP) {
+		} else if (cMode == ClickMode.UP) {
 			command = "mup  ";
 		}
 		String loc = specifiedLoc
@@ -167,11 +167,10 @@ public final class Click implements Command {
 		}
 		return command + " " + loc + " " + but;
 	}
-	
-	public enum ClickType {
+
+	public enum ClickMode {
 		CLICK,
 		DOWN,
 		UP
 	}
-	
 }

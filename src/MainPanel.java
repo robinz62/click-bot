@@ -152,7 +152,8 @@ public class MainPanel extends JPanel {
 				String[] toks = input.split(" ");
 				Command c = null;
 				try {
-					if (toks[0].equals("click")) {
+					if (toks[0].equals("click") || toks[0].equals("mdown")
+							|| toks[0].equals("mup")) {
 						c = Click.fromString(input);
 						textField.setText("");
 					} else if (toks[0].equals("move")) {
@@ -161,7 +162,8 @@ public class MainPanel extends JPanel {
 					} else if (toks[0].equals("wait")) {
 						c = Wait.fromString(input);
 						textField.setText("");
-					} else if (toks[0].equals("type")) {
+					} else if (toks[0].equals("type") || toks[0].equals("kdown")
+							|| toks[0].equals("kup")) {
 						c = Keytype.fromString(input);
 						textField.setText("");
 					} else {
