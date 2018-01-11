@@ -1,5 +1,9 @@
 import java.awt.AWTException;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -147,5 +151,27 @@ public class Application implements Runnable {
 				aboutMessage,
 				"About",
 				JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	/**
+	 * Assuming the parent is using a GridBagLayout, adds the child component
+	 * to the parent component at the specified location with specified insets.
+	 * @param parent the parent container
+	 * @param child the child component
+	 * @param x the x coordinate of the desired grid cell
+	 * @param y the y coordinate of the desired grid cell
+	 * @param top the top inset
+	 * @param left the left inset
+	 * @param right the right inset
+	 * @param bottom the bottom inset
+	 * @param i the insets to apply to the child
+	 */
+	public static void addComponent(Container parent, Component child,
+			int x, int y, int top, int left, int right, int bottom) {
+		GridBagConstraints gc = new GridBagConstraints();
+		gc.gridx = x;
+		gc.gridy = y;
+		gc.insets = new Insets(top, left, right, bottom);
+		parent.add(child, gc);
 	}
 }
