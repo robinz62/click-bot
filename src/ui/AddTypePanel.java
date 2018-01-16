@@ -1,3 +1,5 @@
+package ui;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -19,6 +21,10 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import app.Application;
+import app.Command;
+import app.Keytype;
+
 public class AddTypePanel extends JPanel {
 	
 	private boolean showingHint = true;
@@ -38,7 +44,6 @@ public class AddTypePanel extends JPanel {
 		Application.addComponent(recordKeyComponent, recordButton, 0, 0, 0, 0, 0, 0);
 		Application.addComponent(recordKeyComponent, keyTextField, 1, 0, 0, 4, 0, 0);
 		
-		// Radio group for click type
 		JPanel radioPanel = new JPanel(new GridLayout(1, 3));
 		JRadioButton type = new JRadioButton("type");
 		JRadioButton down = new JRadioButton("down");

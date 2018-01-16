@@ -1,3 +1,5 @@
+package ui;
+
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
@@ -13,6 +15,10 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import app.Application;
+import app.Command;
+import app.Move;
 
 public class AddMovePanel extends JPanel {
 	

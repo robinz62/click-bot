@@ -1,3 +1,4 @@
+package ui;
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -22,6 +23,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+
+import app.Click;
+import app.Command;
+import app.Keytype;
+import app.Move;
+import app.Wait;
 
 /**
  * A JPanel containing the application's main user interface, including the

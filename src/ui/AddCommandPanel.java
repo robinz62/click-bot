@@ -1,3 +1,5 @@
+package ui;
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
@@ -6,6 +8,8 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+
+import app.Command;
 
 /**
  * The panel from which users can select the type of command they want to add
@@ -40,7 +44,7 @@ public class AddCommandPanel extends JPanel {
 		cards.add(new AddClickPanel(list), CLICKPANEL);
 		cards.add(new AddMovePanel(list), MOVEPANEL);
 		cards.add(new AddTypePanel(list), TYPEPANEL);
-//		cards.add(createWaitCard(), WAITPANEL);
+		cards.add(new AddWaitPanel(list), WAITPANEL);
 		
 		this.add(cb, BorderLayout.PAGE_START);
 		this.add(cards, BorderLayout.CENTER);

@@ -1,3 +1,5 @@
+package app;
+
 import java.awt.AWTException;
 import java.awt.Component;
 import java.awt.Container;
@@ -16,6 +18,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+
+import ui.MainPanel;
 
 /**
  * Contains the top-level GUI component and serves as the entry point into the

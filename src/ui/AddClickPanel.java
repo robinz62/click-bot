@@ -1,3 +1,5 @@
+package ui;
+
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
@@ -18,6 +20,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+
+import app.Application;
+import app.Click;
+import app.Command;
 
 public class AddClickPanel extends JPanel {
 
