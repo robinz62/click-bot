@@ -3,16 +3,37 @@ package app;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public final class Keytype implements Command {
 
 	private final int code;
-	private final int[] codeSequence;
+	private final String typeString;
 	private final KeytypeMode kMode;
 	private final String asString;
 	
-	private static final Map<String, Integer> keyMap;
+	/**
+	 * The mapping from strings to the Java-specified KeyEvent code. Available
+	 * strings are listed below. Note that the keys refer to the physical
+	 * button, disregarding any modifiers such as SHIFT. For example, the key
+	 * "!" is mapped to the same {@code KeyEvent} code as "1".
+	 * <ul>
+	 *   <li><tt>abcdefghijklmnopqrstuvwxyz</tt></li>
+	 *   <li><tt>ABCDEFGHIJKLMNOPQRSTUVWXYZ</tt></li>
+	 *   <li><tt>0123456789-=</tt></li>
+	 *   <li><tt>!@#$%^&*()_+</tt></li>
+	 *   <li><tt>,./;'[]\</tt></li>
+	 *   <li><tt><>?:"{}|</tt></li>
+	 *   <li><tt>alt, backspace, capslock, ctrl, delete, down, end, enter, esc,
+	 *           f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, home, ins,
+	 *           kp_down, kp_left, kp_right, kp_up, left, numlock, pgdn, pgup,
+	 *           right, scrolllock, shift, space, tab, up</tt></li>
+	 * </ul>
+	 */
+	public static final Map<String, Integer> keyMap;
+	private static final Set<Character> requiresShift;
 	
 	static {
 		keyMap = new HashMap<>();
@@ -43,7 +64,33 @@ public final class Keytype implements Command {
 		keyMap.put("y", KeyEvent.VK_Y);
 		keyMap.put("z", KeyEvent.VK_Z);
 		
-		keyMap.put("0", KeyEvent.VK_0);
+		keyMap.put("A", KeyEvent.VK_A);
+		keyMap.put("B", KeyEvent.VK_B);
+		keyMap.put("C", KeyEvent.VK_C);
+		keyMap.put("D", KeyEvent.VK_D);
+		keyMap.put("E", KeyEvent.VK_E);
+		keyMap.put("F", KeyEvent.VK_F);
+		keyMap.put("G", KeyEvent.VK_G);
+		keyMap.put("H", KeyEvent.VK_H);
+		keyMap.put("I", KeyEvent.VK_I);
+		keyMap.put("J", KeyEvent.VK_J);
+		keyMap.put("K", KeyEvent.VK_K);
+		keyMap.put("L", KeyEvent.VK_L);
+		keyMap.put("M", KeyEvent.VK_M);
+		keyMap.put("N", KeyEvent.VK_N);
+		keyMap.put("O", KeyEvent.VK_O);
+		keyMap.put("P", KeyEvent.VK_P);
+		keyMap.put("Q", KeyEvent.VK_Q);
+		keyMap.put("R", KeyEvent.VK_R);
+		keyMap.put("S", KeyEvent.VK_S);
+		keyMap.put("T", KeyEvent.VK_T);
+		keyMap.put("U", KeyEvent.VK_U);
+		keyMap.put("V", KeyEvent.VK_V);
+		keyMap.put("W", KeyEvent.VK_W);
+		keyMap.put("X", KeyEvent.VK_X);
+		keyMap.put("Y", KeyEvent.VK_Y);
+		keyMap.put("Z", KeyEvent.VK_Z);
+		
 		keyMap.put("1", KeyEvent.VK_1);
 		keyMap.put("2", KeyEvent.VK_2);
 		keyMap.put("3", KeyEvent.VK_3);
@@ -53,9 +100,22 @@ public final class Keytype implements Command {
 		keyMap.put("7", KeyEvent.VK_7);
 		keyMap.put("8", KeyEvent.VK_8);
 		keyMap.put("9", KeyEvent.VK_9);
+		keyMap.put("0", KeyEvent.VK_0);
+		
+		keyMap.put("!", KeyEvent.VK_1);
+		keyMap.put("@", KeyEvent.VK_2);
+		keyMap.put("#", KeyEvent.VK_3);
+		keyMap.put("$", KeyEvent.VK_4);
+		keyMap.put("%", KeyEvent.VK_5);
+		keyMap.put("^", KeyEvent.VK_6);
+		keyMap.put("&", KeyEvent.VK_7);
+		keyMap.put("*", KeyEvent.VK_8);
+		keyMap.put("(", KeyEvent.VK_9);
+		keyMap.put(")", KeyEvent.VK_0);
 		
 		keyMap.put(",", KeyEvent.VK_COMMA);
 		keyMap.put(".", KeyEvent.VK_PERIOD);
+		keyMap.put("/", KeyEvent.VK_SLASH);
 		keyMap.put(";", KeyEvent.VK_SEMICOLON);
 		keyMap.put("'", KeyEvent.VK_QUOTE);
 		keyMap.put("[", KeyEvent.VK_OPEN_BRACKET);
@@ -64,6 +124,18 @@ public final class Keytype implements Command {
 		keyMap.put("`", KeyEvent.VK_BACK_QUOTE);
 		keyMap.put("-", KeyEvent.VK_MINUS);
 		keyMap.put("=", KeyEvent.VK_EQUALS);
+		
+		keyMap.put("<", KeyEvent.VK_COMMA);
+		keyMap.put(">", KeyEvent.VK_PERIOD);
+		keyMap.put("?", KeyEvent.VK_SLASH);
+		keyMap.put(":", KeyEvent.VK_SEMICOLON);
+		keyMap.put("\"", KeyEvent.VK_QUOTE);
+		keyMap.put("{", KeyEvent.VK_OPEN_BRACKET);
+		keyMap.put("}", KeyEvent.VK_CLOSE_BRACKET);
+		keyMap.put("|", KeyEvent.VK_BACK_SLASH);
+		keyMap.put("~", KeyEvent.VK_BACK_QUOTE);
+		keyMap.put("_", KeyEvent.VK_MINUS);
+		keyMap.put("+", KeyEvent.VK_EQUALS);
 		
 		keyMap.put("alt", KeyEvent.VK_ALT);
 		keyMap.put("backspace", KeyEvent.VK_BACK_SPACE);
@@ -102,28 +174,44 @@ public final class Keytype implements Command {
 		keyMap.put("space", KeyEvent.VK_SPACE);
 		keyMap.put("tab", KeyEvent.VK_TAB);
 		keyMap.put("up", KeyEvent.VK_UP);
+		
+		requiresShift = new HashSet<>();
+		String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ~!@#$%^&*()_+{}:\"<>?|";
+		for (char c : chars.toCharArray()) {
+			requiresShift.add(c);
+		}
 	}
+
 	
+	/**
+	 * Creates a command that will perform a key event using the input code.
+	 * @param kMode the type of action to be performed
+	 * @param code the Java KeyEvent code
+	 * 
+	 * @see KeytypeMode
+	 * @see KeyEvent
+	 */
 	public Keytype(KeytypeMode kMode, int code) {
 		this.kMode = kMode;
 		this.code = code;
-		codeSequence = null;
+		typeString = null;
 		asString = generateString();
 	}
 	
+	/**
+	 * Creates a command that will type out the input string.
+	 * @param s the string to type
+	 */
 	public Keytype(String s) {
-		this.kMode = null;
+		this.kMode = KeytypeMode.TYPE;
 		code = -1;
-		codeSequence = new int[s.length()];
-		for (int i = 0; i < codeSequence.length; ++i) {
-			codeSequence[i] = KeyEvent.getExtendedKeyCodeForChar(s.charAt(i));
-		}
-		asString = "type \"" + s.toUpperCase() + "\"";
+		typeString = s;
+		asString = "type \"" + s + "\"";
 	}
 	
 	@Override
 	public void execute(Robot r) {
-		if (codeSequence == null) {
+		if (typeString == null) {
 			if (kMode == KeytypeMode.TYPE) {
 				r.keyPress(code);
 				r.keyRelease(code);
@@ -133,24 +221,38 @@ public final class Keytype implements Command {
 				r.keyRelease(code);
 			}
 		} else {
-			for (int c : codeSequence) {
-				r.keyPress(c);
-				r.keyRelease(c);
+			for (char c : typeString.toCharArray()) {
+				if (requiresShift.contains(c)) {
+					r.keyPress(KeyEvent.VK_SHIFT);
+				}
+				r.keyPress(keyMap.get(Character.toString(c)));
+				r.keyRelease(keyMap.get(Character.toString(c)));
+				if (requiresShift.contains(c)) {
+					r.keyRelease(KeyEvent.VK_SHIFT);
+				}
 			}
 		}
 	}
-
+	
+	/**
+	 * Creates a Keytype command from an input String. See usage below:
+	 * <ul>
+	 *   <li>{@code [type/kdown/kup] [key]} - type the input key; a list of
+	 *       available keys is determined by {@link #keyMap}</li>
+	 *   <li>{@code type "[string]"} - type the input string literally i.e.
+	 *       case is preserved, and keys that require SHIFT are allowed</li>
+	 * </ul>
+	 * @param s the string to type
+	 * @return the resultant Keytype
+	 * @throws IllegalArgumentException if the string is not properly formatted
+	 */
 	public static Keytype fromString(String s) {
 		String[] toks = s.split(" ");
 		if (toks[0].equals("type")) {
+			// this is the case where the command is <type "some string">
 			if (toks.length >= 2 && toks[1].charAt(0) == '\"'
 					&& s.charAt(s.length() - 1) == '\"') {
 				String toType = s.substring(s.indexOf('\"') + 1, s.lastIndexOf('\"'));
-				for (char c : toType.toCharArray()) {
-					if (!Character.isLetterOrDigit(c)) {
-						throw new IllegalArgumentException();
-					}
-				}
 				return new Keytype(toType);
 			} else if (toks.length == 2) {
 				String key = toks[1].toLowerCase();

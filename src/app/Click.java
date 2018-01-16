@@ -20,8 +20,10 @@ public final class Click implements Command {
 	 * Creates a command that will click the mouse. The button masks are used
 	 * as specified in {@link InputEvent}.
 	 * @param buttons a combination of one or more button masks
+	 * @param cType the type of action to be performed
 	 * 
 	 * @see InputEvent
+	 * @see ClickMode
 	 */
 	public Click(int buttons, ClickMode cType) {
 		this.buttons = buttons;
@@ -36,10 +38,12 @@ public final class Click implements Command {
 	 * Creates a command that will click at the specified location. The button
 	 * masks are used as specified in {@link InputEvent}.
 	 * @param buttons a combination of one or more button masks
+	 * @param cType the type of action to be performed
 	 * @param x X position
 	 * @param y Y position
 	 * 
 	 * @see InputEvent
+	 * @see ClickMode
 	 */
 	public Click(int buttons, ClickMode cType, int x, int y) {
 		this.buttons = buttons;
