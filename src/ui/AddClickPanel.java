@@ -29,7 +29,7 @@ public class AddClickPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	public AddClickPanel(DefaultListModel<Command> list) {
+	public AddClickPanel(DefaultListModel<Command> list, MainPanel mp) {
 		setLayout(new GridBagLayout());
 		setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 		
@@ -132,6 +132,7 @@ public class AddClickPanel extends JPanel {
 						list.addElement(new Click(buttons, cType));
 					}
 					((Window) (AddClickPanel.this.getTopLevelAncestor())).dispose();
+					mp.setLastCommandAdded("Click");
 				} catch (NumberFormatException e) {
 					return;
 				}
@@ -145,5 +146,6 @@ public class AddClickPanel extends JPanel {
 		Application.addComponent(this, buttonsPanel, 0, 4, 8, 0, 0, 0);
 		Application.addComponent(this, radioPanel, 0, 5, 8, 0, 0, 0);
 		Application.addComponent(this, radioPanel, 0, 6, 8, 0, 0, 0);
+		Application.addComponent(this, add, 0, 7, 8, 0, 0, 0);
 	}
 }

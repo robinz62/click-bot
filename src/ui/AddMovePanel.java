@@ -24,7 +24,7 @@ public class AddMovePanel extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
 
-	public AddMovePanel(DefaultListModel<Command> list) {
+	public AddMovePanel(DefaultListModel<Command> list, MainPanel mp) {
 		setLayout(new GridBagLayout());
 		setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 		
@@ -68,6 +68,7 @@ public class AddMovePanel extends JPanel {
 					int y = Integer.parseInt(yTextField.getText());
 					list.addElement(new Move(x, y));
 					((Window) (AddMovePanel.this.getTopLevelAncestor())).dispose();
+					mp.setLastCommandAdded("Move");
 				} catch (NumberFormatException e) {
 					return;
 				}

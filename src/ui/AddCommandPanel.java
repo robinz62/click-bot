@@ -30,8 +30,20 @@ public class AddCommandPanel extends JPanel {
 	/**
 	 * Creates the panel containing all the controls to add a command.
 	 * @param list the list to add the command to
+	 * @param mp the MainPanel that this JPanel is spawned from
 	 */
-	public AddCommandPanel(DefaultListModel<Command> list) {
+	public AddCommandPanel(DefaultListModel<Command> list, MainPanel mp) {
+		this(list, CLICKPANEL, mp);
+	}
+	
+	/**
+	 * Create the panel containing all the controls to add a command, with the
+	 * specified card showing initially.
+	 * @param list the list to add the command to
+	 * @param initialCard the initial card to display
+	 * @param mp the MainPanel that this JPanel is spawned from
+	 */
+	public AddCommandPanel(DefaultListModel<Command> list, String initialCard, MainPanel mp) {
 		this.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 		this.setLayout(new BorderLayout());
 		((BorderLayout) this.getLayout()).setVgap(8);
@@ -41,10 +53,10 @@ public class AddCommandPanel extends JPanel {
 		
 		JPanel cards = new JPanel(new CardLayout());
 		cards.setBorder(BorderFactory.createTitledBorder("Parameters"));
-		cards.add(new AddClickPanel(list), CLICKPANEL);
-		cards.add(new AddMovePanel(list), MOVEPANEL);
-		cards.add(new AddTypePanel(list), TYPEPANEL);
-		cards.add(new AddWaitPanel(list), WAITPANEL);
+		cards.add(new AddClickPanel(list, mp), CLICKPANEL);
+		cards.add(new AddMovePanel(list, mp), MOVEPANEL);
+		cards.add(new AddTypePanel(list, mp), TYPEPANEL);
+		cards.add(new AddWaitPanel(list, mp), WAITPANEL);
 		
 		this.add(cb, BorderLayout.PAGE_START);
 		this.add(cards, BorderLayout.CENTER);
@@ -57,6 +69,15 @@ public class AddCommandPanel extends JPanel {
 			}
 		});
 		
+		// ensure that method parameter initialCard is valid
+		for (String s : cbItems) {
+			if (s.equals(initialCard)) {
+				System.out.println(s + " " + initialCard);
+				cb.setSelectedItem(initialCard);
+				((CardLayout) cards.getLayout()).show(cards, initialCard);
+				return;
+			}
+		}
 		((CardLayout) cards.getLayout()).show(cards, CLICKPANEL);
 	}
 }

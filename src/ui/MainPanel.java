@@ -43,6 +43,19 @@ public class MainPanel extends JPanel {
 	private JList<Command> listDisplay;
 	private Robot robot;
 	
+	/**
+	 * A String containing the last command added. Used for determining which
+	 * card to initially display in the Add Command dialog. This should
+	 * definitely be an enum, but I'm a little lazy. The possible values are:
+	 * <ul>
+	 *   <li>"Click"</li>
+	 *   <li>"Move"</li>
+	 *   <li>"Type"</li>
+	 *   <li>"Wait"</li>
+	 * </ul>
+	 */
+	private String lastCommandAdded;
+	
 	private static final long serialVersionUID = 1L;
 
 	public MainPanel() throws AWTException {
@@ -131,7 +144,7 @@ public class MainPanel extends JPanel {
 						(JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, MainPanel.this),
 						"Add Command",
 						true);
-				dialog.add(new AddCommandPanel(listModel));
+				dialog.add(new AddCommandPanel(listModel, lastCommandAdded, MainPanel.this));
 				dialog.setAlwaysOnTop(true);
 				dialog.setResizable(false);
 				dialog.pack();
@@ -238,5 +251,13 @@ public class MainPanel extends JPanel {
 		});
 		button.setPreferredSize(new Dimension(110, 23));
 		return button;
+	}
+	
+	/**
+	 * Sets the last command added.
+	 * @param cmd the last command added
+	 */
+	public void setLastCommandAdded(String cmd) {
+		lastCommandAdded = cmd;
 	}
 }

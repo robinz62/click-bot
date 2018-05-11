@@ -31,7 +31,7 @@ public class AddTypePanel extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
 
-	public AddTypePanel(DefaultListModel<Command> list) {
+	public AddTypePanel(DefaultListModel<Command> list, MainPanel mp) {
 		setLayout(new GridBagLayout());
 		setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 		
@@ -66,11 +66,12 @@ public class AddTypePanel extends JPanel {
 		
 		// Hook up components/functionality
 		
+		recordButton.setEnabled(false); // TODO: not yet implemented
 		recordButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (keyTextField.isEditable()) {
-					// TODO listen to the next keystroke
+					// TODO: listen to the next keystroke
 				}
 			}
 		});
@@ -134,7 +135,7 @@ public class AddTypePanel extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					if (!stringTextField.isEditable()) {
-						// keyText must be filled
+						// it must be that keyText is filled
 						Keytype.KeytypeMode kType = null;
 						if (type.isSelected()) {
 							kType = Keytype.KeytypeMode.TYPE;
@@ -143,13 +144,19 @@ public class AddTypePanel extends JPanel {
 						} else if (up.isSelected()) {
 							kType = Keytype.KeytypeMode.UP;
 						}
-						int code = -1; // TODO return a Keytype object using the code generated from record
+						// TODO: ensure record key functionality (once implemented) is
+						//       compatible with this code retrieval
+						int code = Keytype.keyMap.get(keyTextField.getText());
 						list.addElement(new Keytype(kType, code));
 					} else if (!keyTextField.isEditable()) {
-						// stringField must be filled
+						// it must be that stringField is filled
 						list.addElement(new Keytype(stringTextField.getText()));
+					} else {
+						// neither text box has been filled
+						return;
 					}
 					((Window) (AddTypePanel.this.getTopLevelAncestor())).dispose();
+					mp.setLastCommandAdded("Type");
 				} catch (NumberFormatException e) {
 					return;
 				}

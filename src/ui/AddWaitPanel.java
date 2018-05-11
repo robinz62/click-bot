@@ -20,7 +20,7 @@ public class AddWaitPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	public AddWaitPanel(DefaultListModel<Command> list) {
+	public AddWaitPanel(DefaultListModel<Command> list, MainPanel mp) {
 		setLayout(new GridBagLayout());
 		setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 		
@@ -41,6 +41,7 @@ public class AddWaitPanel extends JPanel {
 					int time = Integer.parseInt(timeTextField.getText());
 					list.addElement(new Wait(time));
 					((Window) (AddWaitPanel.this.getTopLevelAncestor())).dispose();
+					mp.setLastCommandAdded("Wait");
 				} catch (NumberFormatException e) {
 					return;
 				}
