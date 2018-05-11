@@ -56,9 +56,9 @@ preserved. The available keys are:
 * `!@#$%^&*()_+`
 * `,./;'[]\`
 * `<>?:"{}|`
-* `alt, backspace, capslock, ctrl, delete, down, end, enter, esc,`
-  `f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, home, ins,`
-  `kp_down, kp_left, kp_right, kp_up, left, numlock, pgdn, pgup,`
+* `alt, backspace, capslock, ctrl, delete, down, end, enter, esc,`  
+  `f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, home, ins,`  
+  `kp_down, kp_left, kp_right, kp_up, left, numlock, pgdn, pgup,`  
   `right, scrolllock, shift, space, tab, up`
   
 ### Wait
