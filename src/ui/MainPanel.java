@@ -1,4 +1,5 @@
 package ui;
+
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -111,7 +112,7 @@ public class MainPanel extends JPanel {
 		c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 5;
-		c.insets = new Insets(150, 0, 0, 0); // TODO: figure out a good number
+		c.insets = new Insets(174, 0, 0, 0); // somewhat unideal hard code
 		buttonsPanel.add(runButton, c);
 		
 		return buttonsPanel;
@@ -214,15 +215,25 @@ public class MainPanel extends JPanel {
 	 * Create the Run button.
 	 * @return the Run button
 	 */
-	private JButton createRunButton() {
+	private JButton createRunButton() {		
 		JButton button = new JButton("RUN");
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				for (int i = 0; i < listModel.size(); ++i) {
-//					listDisplay.setSelectedIndex(i);  // TODO: I don't know why this doesn't work
-					listModel.get(i).execute(robot);
-				}
+				// the Java Robot class executes synchronously i.e. will freeze UI
+				// create a new thread
+				Thread t = new Thread(new Runnable() {
+					@Override
+					public void run() {
+						button.setEnabled(false);
+						for (int i = 0; i < listModel.size(); ++i) {
+							listDisplay.setSelectedIndex(i);
+							listModel.getElementAt(i).execute(robot);
+						}
+						button.setEnabled(true);
+					}
+				});
+				t.start();
 			}
 		});
 		button.setPreferredSize(new Dimension(110, 23));
