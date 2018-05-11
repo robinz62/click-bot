@@ -29,7 +29,7 @@ public final class Wait implements Command {
 	/**
 	 * Creates a Wait command from an input String. See usage below:
 	 * <ul>
-	 *   <li>move [time] - wait for the specified time (in milliseconds)
+	 *   <li>wait [time] - wait for the specified time (in milliseconds)
 	 * </ul>
 	 * @param s the string to parse
 	 * @return the resultant Wait
