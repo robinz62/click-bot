@@ -1,4 +1,5 @@
 package app;
+
 import java.awt.Robot;
 
 /**
@@ -50,5 +51,4 @@ public final class Wait implements Command {
 	public String toString() {
 		return asString;
 	}
-	
 }

@@ -7,6 +7,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * A command for typing keys.
+ * @author Robin Zhang
+ *
+ */
 public final class Keytype implements Command {
 
 	private final int code;
@@ -182,7 +187,6 @@ public final class Keytype implements Command {
 		}
 	}
 
-	
 	/**
 	 * Creates a command that will perform a key event using the input code.
 	 * @param kMode the type of action to be performed
