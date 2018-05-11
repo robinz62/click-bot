@@ -72,7 +72,6 @@ public class AddCommandPanel extends JPanel {
 		// ensure that method parameter initialCard is valid
 		for (String s : cbItems) {
 			if (s.equals(initialCard)) {
-				System.out.println(s + " " + initialCard);
 				cb.setSelectedItem(initialCard);
 				((CardLayout) cards.getLayout()).show(cards, initialCard);
 				return;
