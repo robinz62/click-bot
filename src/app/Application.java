@@ -10,6 +10,9 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -30,13 +33,15 @@ import ui.MainPanel;
 public class Application implements Runnable {
 	
 	private JFrame frame;
+	private MainPanel mainPanel;
 	
-	private final static String helpMessage;
+	private final static String helpWebsite;
 	private final static String aboutMessage;
 	
 	static {
-		helpMessage = "Look at the readme";
-		aboutMessage = "put something here";
+		helpWebsite = "http://github.com/robinz62/click-bot";
+		aboutMessage = "Created by Robin Zhang 2018.\n"
+				+ "For more details, click the help menu item.";
 	}
 	
 	public static void main(String[] args) {
@@ -55,15 +60,15 @@ public class Application implements Runnable {
 		JMenuBar menuBar = createMenuBar();
 		frame.setJMenuBar(menuBar);
 		
-		MainPanel mc = null;
+		mainPanel = null;
 		try {
-			mc = new MainPanel();
+			mainPanel = new MainPanel();
 		} catch (AWTException e) {
 			System.out.println("Error creating Robot");
 			System.exit(-1);
 		}
 		
-		frame.setContentPane(mc);
+		frame.setContentPane(mainPanel);
 		frame.pack();
 		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 		frame.setLocation(screen.width / 2 - frame.getWidth() / 2,
@@ -94,8 +99,36 @@ public class Application implements Runnable {
 		JMenu file = new JMenu("File");
 		file.setMnemonic(KeyEvent.VK_F);
 		JMenuItem mNew = new JMenuItem("New");
+		mNew.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				mainPanel.clear();
+			}
+		});
 		JMenuItem mOpen = new JMenuItem("Open...");
+		mOpen.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					ClickFilesManager.open(mainPanel);
+				} catch (IOException e) {
+					System.err.println("failed to open file");
+					e.printStackTrace();
+				}
+			}
+		});
 		JMenuItem mSave = new JMenuItem("Save");
+		mSave.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					ClickFilesManager.save(mainPanel);
+				} catch (IOException e) {
+					System.err.println("failed to save");
+					e.printStackTrace();
+				}
+			}
+		});
 		JMenuItem mSaveAs = new JMenuItem("Save As...");
 		JMenuItem mExit = new JMenuItem("Exit");
 		file.add(mNew);
@@ -138,13 +171,16 @@ public class Application implements Runnable {
 	}
 	
 	/**
-	 * Shows the help dialog.
+	 * Opens the README on the default browser.
 	 */
 	private void showHelp() {
-		JOptionPane.showMessageDialog(frame,
-				helpMessage,
-				"Help",
-				JOptionPane.INFORMATION_MESSAGE);
+		try {
+			java.awt.Desktop.getDesktop().browse(new URI(helpWebsite));
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			System.err.println("Malformed URI");
+		}
 	}
 	
 	/**

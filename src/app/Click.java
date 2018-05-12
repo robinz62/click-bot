@@ -16,6 +16,7 @@ public final class Click implements Command {
 	private final int y;
 	private final ClickMode cMode;
 	private final String asString;
+	private final String cmdString;
 	
 	/**
 	 * Creates a command that will click the mouse. The button masks are used
@@ -33,6 +34,7 @@ public final class Click implements Command {
 		y = 0;
 		this.cMode = cType;
 		asString = generateString();
+		cmdString = generateCmdString();
 	}
 	
 	/**
@@ -53,6 +55,7 @@ public final class Click implements Command {
 		this.y = y;
 		this.cMode = cType;
 		asString = generateString();
+		cmdString = generateCmdString();
 	}
 	
 	@Override
@@ -145,6 +148,11 @@ public final class Click implements Command {
 	}
 	
 	@Override
+	public String getStringCmd() {
+		return cmdString;
+	}
+	
+	@Override
 	public String toString() {
 		return asString;
 	}
@@ -172,6 +180,24 @@ public final class Click implements Command {
 			but += "M";
 		}
 		return command + " " + loc + " " + but;
+	}
+	
+	private String generateCmdString() {
+		if (!specifiedLoc) {
+			return (cMode == ClickMode.CLICK ? "click" : cMode == ClickMode.DOWN ? "mdown" : "mup")
+					+ " "
+					+ ((buttons & InputEvent.BUTTON1_DOWN_MASK) != 0 ? "l" : "")
+					+ ((buttons & InputEvent.BUTTON2_DOWN_MASK) != 0 ? "r" : "")
+					+ ((buttons & InputEvent.BUTTON3_DOWN_MASK) != 0 ? "m" : "");
+		} else {
+			return (cMode == ClickMode.CLICK ? "click" : cMode == ClickMode.DOWN ? "mdown" : "mup")
+					+ " " + x
+					+ " " + y
+					+ " "
+					+ ((buttons & InputEvent.BUTTON1_DOWN_MASK) != 0 ? "l" : "")
+					+ ((buttons & InputEvent.BUTTON2_DOWN_MASK) != 0 ? "r" : "")
+					+ ((buttons & InputEvent.BUTTON3_DOWN_MASK) != 0 ? "m" : "");
+		}
 	}
 
 	public enum ClickMode {

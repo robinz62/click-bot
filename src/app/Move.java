@@ -11,6 +11,7 @@ public final class Move implements Command {
 	private final int x;
 	private final int y;
 	private final String asString;
+	private final String cmdString;
 	
 	/**
 	 * Creates a command that will move the mouse.
@@ -21,6 +22,7 @@ public final class Move implements Command {
 		this.x = x;
 		this.y = y;
 		asString = "move  " + "[" + x + ", " + y + "]";
+		cmdString = "move " + x + " " + y;
 	}
 	
 	@Override
@@ -48,6 +50,11 @@ public final class Move implements Command {
 		} else {
 			throw new IllegalArgumentException();
 		}
+	}
+	
+	@Override
+	public String getStringCmd() {
+		return cmdString;
 	}
 	
 	@Override

@@ -12,6 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -251,6 +253,56 @@ public class MainPanel extends JPanel {
 		});
 		button.setPreferredSize(new Dimension(110, 23));
 		return button;
+	}
+	
+	/**
+	 * Adds a command to the list of commands.
+	 * @param input the command to add
+	 * @return {@code true}, if successfully added, false otherwise
+	 */
+	public boolean addCommand(String input) {
+		String[] toks = input.split(" ");
+		Command c = null;
+		try {
+			if (toks[0].equals("click") || toks[0].equals("mdown")
+					|| toks[0].equals("mup")) {
+				c = Click.fromString(input);
+			} else if (toks[0].equals("move")) {
+				c = Move.fromString(input);
+			} else if (toks[0].equals("wait")) {
+				c = Wait.fromString(input);
+			} else if (toks[0].equals("type") || toks[0].equals("kdown")
+					|| toks[0].equals("kup")) {
+				c = Keytype.fromString(input);
+			} else {
+				// invalid input
+				return false;
+			}
+		} catch (IllegalArgumentException ex) {
+			// invalid input
+			return false;
+		}
+		listModel.addElement(c);
+		return true;
+	}
+	
+	/**
+	 * Clears the list of commands.
+	 */
+	public void clear() {
+		listModel.clear();
+	}
+	
+	/**
+	 * Returns the current list of commands.
+	 * @return the current list of commands.
+	 */
+	public List<Command> getCommands() {
+		List<Command> cmds = new ArrayList<>();
+		for (int i = 0; i < listModel.size(); ++i) {
+			cmds.add(listModel.get(i));
+		}
+		return cmds;
 	}
 	
 	/**

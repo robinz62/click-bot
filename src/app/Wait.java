@@ -11,6 +11,7 @@ public final class Wait implements Command {
 
 	private final int timeInMillis;
 	private final String asString;
+	private final String cmdString;
 	
 	/**
 	 * Creates a command that waits for the specified time.
@@ -19,6 +20,7 @@ public final class Wait implements Command {
 	public Wait(int timeInMillis) {
 		this.timeInMillis = timeInMillis;
 		asString = "wait  " + timeInMillis;
+		cmdString = "wait " + timeInMillis;
 	}
 	
 	@Override
@@ -45,6 +47,11 @@ public final class Wait implements Command {
 		} else {
 			throw new IllegalArgumentException();
 		}
+	}
+	
+	@Override
+	public String getStringCmd() {
+		return cmdString;
 	}
 	
 	@Override

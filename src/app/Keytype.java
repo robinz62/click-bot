@@ -18,6 +18,7 @@ public final class Keytype implements Command {
 	private final String typeString;
 	private final KeytypeMode kMode;
 	private final String asString;
+	private final String cmdString;
 	
 	/**
 	 * The mapping from strings to the Java-specified KeyEvent code. Available
@@ -200,6 +201,9 @@ public final class Keytype implements Command {
 		this.code = code;
 		typeString = null;
 		asString = generateString();
+		cmdString = (kMode == KeytypeMode.TYPE ? "type"
+				: kMode == KeytypeMode.DOWN ? "kdown" : "kup")
+				+ " " + KeyEvent.getKeyText(code);
 	}
 	
 	/**
@@ -211,6 +215,7 @@ public final class Keytype implements Command {
 		code = -1;
 		typeString = s;
 		asString = "type \"" + s + "\"";
+		cmdString = asString;
 	}
 	
 	@Override
@@ -288,6 +293,11 @@ public final class Keytype implements Command {
 		} else {
 			throw new IllegalArgumentException();
 		}
+	}
+	
+	@Override
+	public String getStringCmd() {
+		return cmdString;
 	}
 	
 	@Override
