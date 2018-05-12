@@ -68,8 +68,7 @@ The command line usage is:
   
 ## Future Ideas/TODOs
 
-* File menu options (new, open, save, save as)
-* Better help/about dialog
+* Warning when exiting unsaved state
 * Record functionality for adding keys
 * Kill switch
 * Optional looping

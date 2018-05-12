@@ -10,6 +10,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -34,6 +35,7 @@ public class Application implements Runnable {
 	
 	private JFrame frame;
 	private MainPanel mainPanel;
+	private File lastFile;
 	
 	private final static String helpWebsite;
 	private final static String aboutMessage;
@@ -103,6 +105,7 @@ public class Application implements Runnable {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				mainPanel.clear();
+				lastFile = null;
 			}
 		});
 		JMenuItem mOpen = new JMenuItem("Open...");
@@ -110,7 +113,7 @@ public class Application implements Runnable {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					ClickFilesManager.open(mainPanel);
+					lastFile = ClickFilesManager.open(mainPanel);
 				} catch (IOException e) {
 					System.err.println("failed to open file");
 					e.printStackTrace();
@@ -122,15 +125,35 @@ public class Application implements Runnable {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					ClickFilesManager.save(mainPanel);
+					if (lastFile == null) {
+						lastFile = ClickFilesManager.saveAs(mainPanel);
+					} else {
+						lastFile = ClickFilesManager.save(mainPanel, lastFile);
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		JMenuItem mSaveAs = new JMenuItem("Save As...");
+		mSaveAs.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					lastFile = ClickFilesManager.saveAs(mainPanel);
 				} catch (IOException e) {
 					System.err.println("failed to save");
 					e.printStackTrace();
 				}
 			}
 		});
-		JMenuItem mSaveAs = new JMenuItem("Save As...");
 		JMenuItem mExit = new JMenuItem("Exit");
+		mExit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				System.exit(0);
+			}
+		});
 		file.add(mNew);
 		file.add(mOpen);
 		file.add(mSave);
